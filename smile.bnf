@@ -1,0 +1,168 @@
+﻿/*
+*	Project Name:   smileLang
+*	Language: 		BNF / EBNF
+*	Date Started:   2010-09-25
+*	Platform Used:  Windows 7
+* 
+*	Author: Arunas Bendoraitis
+*	E-Mail: 891214@gmail.com
+*	Homepage: http://freddy.lt
+* 
+*	Description: EBNF / BNF of smileLang
+*
+*/
+
+/*--------------------------------------------------------
+----------------------- Main elements --------------------
+---------------------------------------------------------*/
+
+<program>           ::=     '(=' [ <mainBlock> ] '=).'
+<mainBlock>         ::=      { <function> } '__void smile=)' <block> 
+<block>             ::=     '{=' <statments> '=}'
+
+
+/*--------------------------------------------------------
+------------------------- Functions ----------------------
+---------------------------------------------------------*/
+
+<function>          ::=     <returnType> <functionName> '(=' [ <paramList> ] '=)' <block>
+<paramList>         ::=     <param> { ':' <param> }
+<param>             ::=     <variable> <type>
+
+
+/*-------------------------------------------------------
+------------------------- Statments ---------------------
+---------------------------------------------------------*/
+
+<statments>         ::=     <statement> { '.' <statement> } '.'
+<statement>         ::=     <simpleStmt> | <controlStmt> | <functionCall> | <reservedStmt>
+
+<simpleStmt>        ::=     <varDeclaration> | <assignmentStmt> | <ioStmt>
+<controlStmt>       ::=     <forLoop> | <whileLoop> | <ifStmt> | <eachStmt>
+<functionCall>      ::=     <functionName> [ <callParamList> ]
+<callParamList>     ::=     '(=' <expression> { ':' <expression> } '=)'
+
+<reservedStmt>      ::=     'ret' [ <expression> ]
+
+/*-------------------------------------------------------
+---------------------- Simple Statments -----------------
+---------------------------------------------------------*/
+
+<varDeclaration>    ::=     <variableList> <type> [ '=>' <expression> ]
+<assignmentStmt>    ::=     <variable> <assigmentOp> <expression>
+
+<ioStmt>            ::=     <inputStmt> | <outputStmt>
+<inputStmt>         ::=     'smileIn' <variable>
+<outputStmt>        ::=     'smileOut' <expression>
+
+
+/*-------------------------------------------------------
+---------------------- Control Statments ----------------
+---------------------------------------------------------*/
+
+<forLoop>           ::=     'for' <simpleVariable> 'until' <expression> <block>
+<whileLoop>         ::=     'while' <expression> <block>
+<ifStmt>            ::=     'if' <expression> <block> [ 'else' ( <block> | <ifStmt> ) ] 
+<eachStmt>          ::=      <varArray> '.each(=' <simpleVariable> '=)' <block>
+
+
+/*-------------------------------------------------------
+------------------------ Expressions --------------------
+---------------------------------------------------------*/
+
+<expression>        ::=     <expression2> [ <orOp> <expression> ]
+<expression2>       ::=     <expression3> [ <andOp> <expression2> ]
+<expression3>       ::=     <expression4> [ <comparisonOp> <expression3> ]
+<expression4>       ::=     <term> { <addOp> <expression4> }
+<term>              ::=     <factor> { <multiOp> <term> }
+<factor>            ::=     '(' <expression> ')' | <variable> | <constant> | <boolean> | <functionCall> | <set> | '!' <expression>
+
+
+/*-------------------------------------------------------
+------------------ Low Level Definitions ----------------
+---------------------------------------------------------*/
+
+<variableList>      ::=     <variable> { ':' <variable> }
+<type>              ::=     '__' ( 'int' | 'float' | 'string' | 'bool' )
+<returnType>        ::=     <type> | '__void'
+
+<number>            ::=     <int> | <float>
+<int>              ::=     [ <sign> ] <digitSeq>
+<float>             ::=     <integer> ',' <digitSeq>
+<index>             ::=     <expression>
+
+<identifier>        ::=     <letter> { <letter> | <digit> }
+<variable>          ::=     <simpleVariable> | <varArray>
+<simpleVariable>    ::=    '@' <identifier>
+<varArray>          ::=    '@@' <identifier> '[=' [ <index> ] '=]'   
+<functionName>      ::=    '$' <identifier>
+
+<sign>              ::=     '+' | '-'
+<digitSeq>          ::=     <digit> { <digit> }
+<digit>             ::=     '0' | ... | '9'
+<letter>            ::=     'a' | ... | 'z' | 'A' | ... | 'Z'
+
+<set>               ::=     '{' [ <expression> { ':' <expression> } ] '}'
+
+<andOp>             ::=     '&&'
+<orOp>              ::=     '||'
+<comparisonOp>      ::=     '?=' | '<' | '<=' | '>' | '>=' | '!='
+<addOp>             ::=     '+' | '-'
+<multiOp>           ::=     '*' | '/'
+<assigmentOp>       ::=     '=>' | '-=' | '+=' | '*=' | '/='
+
+<string>            ::=     "'" { <stringChar> } "'"
+<stringChar>        ::=     anyCharacterExceptSingleQuote | "\'"
+
+<boolean>           ::=     'true' | 'false'
+<constant>          ::=     <string> | <number>
+
+
+
+/*------------------------------------------------------------------------*/
+
+
+/*-------------------------------------------------------
+--------------------- Program's example -----------------
+---------------------------------------------------------*/
+//(=
+//    __void $sayHello(= @helloMsg __string =)
+//    {=
+//        smileOut @helloMsg.
+//    =}
+//
+//   __void smile=)
+//   {=
+//        @count __int => 5.
+//
+//        #(
+//            String declaration and assignment.
+//        )#
+//
+//        @name __string.
+//        @name => 'Jonas'.
+//
+//        @@myArray[= 3 =] __int => {5 : 4 : 8}.
+//
+//        @@myArray.each(= @number =)
+//        {=
+//            smileOut @number.
+//        =}
+//
+//        for @count until 10
+//        {=
+//            $sayHello(= @name =).
+//        =}
+//
+//        @value __int => 0.
+//
+//        while @value < 20
+//        {=
+//            smileOut 'Enter value more than 20 to exit the loop: '.
+//            smileIn @value.
+//        =}
+//
+//        ret 0.
+//    =}
+//
+//=).

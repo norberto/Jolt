@@ -1,0 +1,106 @@
+<program>           ::=     '<!' [ <mainBlock> ] '!>'
+<mainBlock>         ::=      { <function> } '!void shaft~>' <block> 
+<block>             ::=     '{~' <statments> '~}'
+
+<function>          ::=     <returnType> <functionName> '(' [ <paramList> ] ')' <block>
+<paramList>         ::=     <param> { '~' <param> }
+<param>             ::=     <variable> <type>
+
+<statments>         ::=     <statement> { ';' <statement> } ';'
+<statement>         ::=     <simpleStmt> | <controlStmt> | <functionCall> | <reservedStmt>
+
+<simpleStmt>        ::=     <varDeclaration> | <assignmentStmt> | <ioStmt>
+<controlStmt>       ::=     <forLoop> | <whileLoop> | <ifStmt> | <eachStmt>
+<functionCall>      ::=     <functionName> [ <callParamList> ]
+<callParamList>     ::=     '(' <expression> { '~' <expression> } ')'
+
+<reservedStmt>      ::=     'ret' [ <expression> ]
+
+<varDeclaration>    ::=     <variableList> <type> [ '=>' <expression> ]
+<assignmentStmt>    ::=     <variable> <assigmentOp> <expression>
+
+<ioStmt>            ::=     <inputStmt> | <outputStmt>
+<inputStmt>         ::=     '<<<' <variable>
+<outputStmt>        ::=     '>>>' <expression>
+
+<forLoop>           ::=     'roll' <simpleVariable> 'until' <expression> <block>
+<whileLoop>         ::=     'while' <expression> <block>
+<ifStmt>            ::=     'if' <expression> <block> [ 'else' ( <block> | <ifStmt> ) ] 
+<eachStmt>          ::=      <varArray> '.obo(' <simpleVariable> ')' <block>
+
+<expression>        ::=     <expression2> [ <orOp> <expression> ]
+<expression2>       ::=     <expression3> [ <andOp> <expression2> ]
+<expression3>       ::=     <expression4> [ <comparisonOp> <expression3> ]
+<expression4>       ::=     <term> { <addOp> <expression4> }
+<term>              ::=     <factor> { <multiOp> <term> }
+<factor>            ::=     '(' <expression> ')' | <variable> | <constant> | <boolean> | <functionCall> | <set> | '!' <expression>
+
+<variableList>      ::=     <variable> { ',' <variable> }
+<type>              ::=     '<=' ( 'int' | 'float' | 'string' | 'bool' )
+<returnType>        ::=     <type> | '!void'
+
+<number>            ::=     <int> | <float>
+<int>               ::=     [ <sign> ] <digitSeq>
+<float>             ::=     <integer> ',' <digitSeq>
+<index>             ::=     <expression>
+
+<identifier>        ::=     <letter> { <letter> | <digit> }
+<variable>          ::=     <simpleVariable> | <varArray>
+<simpleVariable>    ::=    '^' <identifier>
+<varArray>          ::=    '^^' <identifier> '[' [ <index> { <addOp> | <multiOp> <index> } ] ']' { '[' [ <index> { <addOp> | <multiOp> <index> } ] ']' } 
+<functionName>      ::=    '>>' <identifier>
+
+<sign>              ::=     '+' | '-'
+<digitSeq>          ::=     <digit> { <digit> }
+<digit>             ::=     '0' | ... | '9'
+<letter>            ::=     'a' | ... | 'z' | 'A' | ... | 'Z'
+
+<set>               ::=     '{' [ <expression> { '~' <expression> } ] '}' { '~' '{' [ <expression> { '~' <expression> } ] '}' }
+
+<andOp>             ::=     '&&'
+<orOp>              ::=     '||'
+<comparisonOp>      ::=     '==' | '<' | '<=' | '>' | '>=' | '!='
+<addOp>             ::=     '+' | '-'
+<multiOp>           ::=     '*' | '/'
+<assigmentOp>       ::=     '=>' | '-=' | '+=' | '*=' | '/='
+
+<string>            ::=     "'" { <stringChar> } "'"
+<stringChar>        ::=     <anyCharacterExceptSingleQuote> | "\'"
+
+<boolean>           ::=     'true' | 'false'
+<constant>          ::=     <string> | <number>
+
+
+/*
+<!
+	!void >>sayHello( ^helloMsg <=string ) 
+	{~ 
+		>>> ^helloMsg;
+	~};
+	
+	
+	!void shaft~>
+	{~
+		^count <=int => 3;
+		^name <=string;
+		^name => 'Teemo';
+		
+		^^myArray[3] <=int => {5 ~ 4 ~ 8};
+		
+		^^myArray.obo(^number) 
+		{~
+			>>> ^number;
+		~};
+		
+		roll ^count until 50
+		{~
+			>>sayHello(^name);
+		~};
+
+		ret 0;
+	~};
+
+!>
+*/
+
+

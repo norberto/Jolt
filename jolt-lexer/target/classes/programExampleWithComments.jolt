@@ -1,0 +1,50 @@
+### JOLT - Program Example ###
+
+const string IM_NOT_CHANGING <=- "bar";
+
+fn string c(string a, int b) <=- {
+    if (b > 0) {
+        b--;
+        spit c(a + b.str(), b)
+    }
+    spit false;
+};
+
+group fooStruct <=- {
+    let int a;
+    let int b;
+    fn int sum() <=- {
+        spit (this.a*this.b) || 0; // later this can be changed to some other word/symbol
+    };
+};
+
+
+@-> {
+    let int a <=- $argc;
+    let string b <=- $args;
+    let fooStruct j;
+    let string line;
+    $$> line;
+    $$< line + '\n';
+
+    j.a++;
+    a <=- j.a + j["b"];
+    a <=- 7; //a=7
+    a <+- 5; //a=12
+    a <*- 5; //a=60
+    a <-- 4; //a=56
+
+    c("a", 3) // call function
+  
+    ala ("123") { // while not false or null or "" or 0. (as long as)
+        bye; // break
+    }
+  
+    ditto (let int i; i < 3; i++) {
+        again; // continue
+    }
+    ditto (let int e in g) { //implement with ditto
+                        //(let int e; g.$index < g.length; e <=- g[++g.$index])
+       bye; 
+    }
+};

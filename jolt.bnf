@@ -1,0 +1,111 @@
+<program>                       ::= <title> { <declaration> } <main> { <declaration> }
+
+<title>                         ::= '###' { <ascii> } '###'
+<main>                          ::= '@->' <block-body>
+
+<block-body>                    ::=  <block-body-no-semi> ';'
+<block-body-no-semi>            ::= '{' <block> '}'
+
+
+
+// DECLARATION
+<declaration>                   ::= <constant-declaration> | <variable-declaration> | <structure-declaration> | <function-declaration>
+
+<constant-declaration>          ::= 'const' <type> <name> <assignment-operator> <value> ';'
+
+<variable-declaration>          ::= <variable-declaration-no-semi> ';'
+<variable-declaration-no-semi>  ::= <variable-ldeclaration> | <variable-ldeclaration> <value-assignment>
+<variable-ldeclaration>         ::= 'let' <type> <name>
+
+<structure-declaration>         ::= 'group' <name> <assignment-operator> '{' <structure-body> '}' ';'
+<structure-body>                ::= <constant-declaration> | <variable-declaration> | <function-declaration>
+
+<function-declaration>          ::= 'fn' <fn-type> <name> '(' <function-param-list> ')' <assignment-operator> <block-body>
+<function-param-list>           ::= [ <function-parameter> { ',' <function-parameter> } ]
+<function-parameter>            ::= <type> <name>
+
+
+
+// STATEMENT
+<block>                         ::= { <statement> }
+<statement>                     ::= <inline-stmt-no-semi> ';' | <exit-stmt> ';' | <control-stmt>
+<inline-stmt-no-semi>           ::= <simple-stmt> | <expression>
+
+<simple-stmt>                   ::= <variable-declaration>  | <name> <value-assignment> | <io-stmt>
+
+<function-call>                 ::= <name> '(' [ <call-param-list> ] ')'
+<call-param-list>               ::= <value> { ',' <value> }
+<exit-stmt>                     ::= <return-stmt> | <break-stmt> | <continue-stmt>
+<return-stmt>                   ::= 'spit' [ <value> ]
+<break-stmt>                    ::= 'bye'
+<continue-stmt>                 ::= 'again'
+
+<io-stmt>                       ::= <input-stmt> | <output-stmt>
+<input-stmt>                    ::= '$$>' <name>
+<output-stmt>                   ::= '$$<' <value>
+
+<control-stmt>                  ::= <for-loop> | <foreach-loop> | <while-loop> | <if-stmt>
+<for-loop>                      ::= 'ditto' '('  <variable-declaration-no-semi>  ';' <value> ';' <inline-stmt-no-semi> ')' <block-body-no-semi>
+<foreach-loop>                  ::= 'ditto' '(' <variable-ldeclaration> 'in' <value> ')' <block-body-no-semi>
+<while-loop>                    ::= 'ala' '(' <value> ')' <block-body-no-semi>
+
+<if-stmt>                       ::= 'if' '(' <value> ')' <block-body-no-semi> [ 'else' ( <block-body-no-semi> | <if-stmt> ) ]
+
+// EXPRESSIONS
+<inc-or-dec>                    ::= <increment> | <decrement>
+<increment>                     ::= '++'<name> | <name>'++'
+<decrement>                     ::= '--'<name> | <name>'--'
+
+<expression>                    ::= <ex2> [ <logic-operator> <expression> ]
+<ex2>                           ::= <ex3> [ <comparison-operator> <ex2> ]
+<ex3>                           ::= <ex4> [ <bit-operator> <ex3> ]
+<ex4>                           ::= <term> [ <add-or-subtract-operator> <ex4> ]
+<term>                          ::= <factor> [ <mult-or-div-operator> <term> ]
+<factor>                        ::= '(' <expression> ')' | <inc-or-dec> | <name> | <type-value> | <structure-element> | <function-call> | '!' <expression>
+
+// TYPES
+<type>                          ::= 'char' | 'boolean' | 'int' | 'float' | 'string' | <name>
+<fn-type>                       ::= 'void' | <type>
+<type-value>                    ::= <char-value> | <boolean-value> | <integer-value> | <float-value> | <string-value> | <null-value>
+<char-value>                    ::= "'" <ascii> "'"
+<boolean-value>                 ::= 'false' | 'true'
+<integer-value>                 ::= <integer>
+<float-value>                   ::= <decimal>
+<string-value>                  ::= '"' { <ascii> } '"'
+<null-value>                    ::= 'null'
+
+
+
+// OPERATORS
+<assignment>                    ::= <assignment-operator> | <assignment-operator-adv>
+<assignment-operator>           ::= '<=-'
+<assignment-operator-adv>       ::= '<'( <simple-operator> | <bit-operator> )'-'
+
+<simple-operator>               ::= <mult-or-div-operator> | <add-or-subtract-operator>
+<logic-operator>                ::= '&&' | '||'
+<comparison-operator>           ::= '==' | '<' | '<=' | '>' | '>=' | '!='
+<bit-operator>                  ::= '&' | '|' | '^' | '<<' | '<<<' | '>>' | '>>>'
+<mult-or-div-operator>          ::= '*' | '/'
+<add-or-subtract-operator>      ::= '+' | '-'
+
+
+
+// SYMBOLS
+<ascii>                         ::= <symbol> | <letter> | <digit>
+<special-letter>                ::= '$' | '_' | '#'
+<word>                          ::= <ascii> { <ascii> }
+<letter>                        ::= <upcase-letter> | <lowcase-letter>
+<integer>                       ::= <digit> { <digit> }
+<decimal>                       ::= <integer> '.' <integer>
+<digit>                         ::= '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9'
+<symbol>                        ::= '!' | '"' | '#' | '$' | '%' | '&' | "'" | '(' | ')' | '*' | '+' | ',' | '-' | '.' | '/' | ':' | ';' | '<' | '=' | '>' | '?' | '@' | '[' | '\' | ']' | '^' | '_' | '`' | '{' | '|' | '}' | '~'
+<upcase-letter>                 ::= 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G' | 'H' | 'I' | 'J' | 'K' | 'L' | 'M' | 'N' | 'O' | 'P' | 'Q' | 'R' | 'S' | 'T' | 'U' | 'V' | 'W' | 'X' | 'Y' | 'Z'
+<lowcase-letter>                ::= 'a' | 'b' | 'c' | 'd' | 'e' | 'f' | 'g' | 'h' | 'i' | 'j' | 'k' | 'l' | 'm' | 'n' | 'o' | 'p' | 'q' | 'r' | 's' | 't' | 'u' | 'v' | 'w' | 'x' | 'y' | 'z'
+
+// UNLABELED
+<value-assignment>              ::= <assignment> <value>
+<value>                         ::= <expression>
+<name>                          ::= <valid-name> | <structure-element>
+<valid-name>                    ::= ( <special-letter> | <letter> ) { <special-letter> | <letter> | <digit> }
+<structure-element>             ::= <name><structure-element-accessor> | <structure-element><structure-element-accessor>
+<structure-element-accessor>    ::= '.'<name> | '[' ( <expression> | <name> ) ']' | '["' <word> '"]'
